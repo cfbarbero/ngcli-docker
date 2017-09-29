@@ -4,29 +4,19 @@ FROM node:$NODE_VERSION
 
 LABEL authors="cris barbero <cfbarbero@gmail.com>"
 
-# credits to https://github.com/emmenko/docker-nodejs-karma 
-
+# Install google chrome and cleanup the apt-cache
 RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update && apt-get install -y Xvfb google-chrome-stable \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install ngcli
-ARG NG_CLI_VERSION=latest
-ENV NG_CLI_VERSION=$NG_CLI_VERSION
-RUN yarn global add @angular/cli@$NG_CLI_VERSION && rm -rf $(yarn cache dir)
-
-ENV XVFB_DIMENSIONS = "1920x1080x24"
-ADD xvfb.sh /etc/init.d/xvfb
-ADD entrypoint.sh /entrypoint.sh
-
-RUN chmod +x /etc/init.d/xvfb \
-    && chmod +x /entrypoint.sh
-
-ENV DISPLAY :99.0
-ENV CHROME_BIN /usr/bin/google-chrome
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-ENTRYPOINT ["/entrypoint.sh"]
+# We need to install angular CLI globally so that we can use it in our build scripts
+# unsafe-perm is needed because root doesn't have access to the .node-gyp folder in node image (https://github.com/nodejs/node-gyp/issues/454)
+ARG NG_CLI_VERSION=1.4.3
+ENV NG_CLI_VERSION=$NG_CLI_VERSION
+RUN npm update && npm install  --unsafe-perm -g @angular/cli@$NG_CLI_VERSION
