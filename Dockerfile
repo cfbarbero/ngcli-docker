@@ -17,6 +17,6 @@ WORKDIR /usr/src/app
 
 # We need to install angular CLI globally so that we can use it in our build scripts
 # unsafe-perm is needed because root doesn't have access to the .node-gyp folder in node image (https://github.com/nodejs/node-gyp/issues/454)
-ARG NG_CLI_VERSION=1.4.3
+ARG NG_CLI_VERSION=1.7.4
 ENV NG_CLI_VERSION=$NG_CLI_VERSION
 RUN npm update && npm install  --unsafe-perm -g @angular/cli@$NG_CLI_VERSION
