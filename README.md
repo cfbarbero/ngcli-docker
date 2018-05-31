@@ -52,8 +52,8 @@ This image doesn't contain any project code, but is instead a tooling image to s
 
 ### Versions:
 - Chrome:
-- ng-cli: 1.4.3
-- node: 8
+- ng-cli: 1.7.4
+- node: 10
 
 
 ### References
